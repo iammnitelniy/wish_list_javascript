@@ -47,7 +47,7 @@ export const WishList = (props: WishListPropsType) => {
 		props.ChangeOs(OsValue)
 	}
 
-
+//push
 
 	return (
 			<div>
