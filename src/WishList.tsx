@@ -46,9 +46,9 @@ export const WishList = (props: WishListPropsType) => {
 	const ChangeOsHandler = (OsValue: OsType) => {
 		props.ChangeOs(OsValue)
 	}
-
+//newpush
 //push
-
+//commit + push
 	return (
 			<div>
 				<h1>Phones</h1>
