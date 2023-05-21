@@ -1,92 +1,132 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 import {OsType, WishesDataPropsType} from "./App";
+import {SuperInput} from "./SuperComponents/SuperInput";
+
 export type OsTypeForSelect = "Android" | "iOS" | "Select OS"
+export type StatusTypeForSelect = "All" | "Active" | "Completed"
 
 export type WishListPropsType = {
 	wishes: WishesDataPropsType[]
-	addItem: (newItem: string, wishFilter: OsTypeForSelect)=> void
-	removeTask: (taskId: string) => void
-	ChangeOs: (osValue: OsType) => void
 	osFilter: OsType
+	setOsFilter: (text: OsType) => void
+	statusFilter: StatusTypeForSelect
+	setStatusFilter: (text: StatusTypeForSelect) => void
+	addNewWish: (value: string, oS: OsTypeForSelect) => void
+	value?: string
+	removeWish: (id: string) => void
+	changeWishStatus: (wishId: string, isDone: boolean) => void
+
+
 }
 
-export const WishList = (props: WishListPropsType) => {
-	let [newItem, setNewItem] = useState("")
-	let [os, setOS] = useState<OsTypeForSelect>("Select OS")
+export const WishList: React.FC<WishListPropsType> = (
+{
+	wishes,
+	osFilter,
+	setOsFilter,
+	statusFilter,
+	setStatusFilter,
+	addNewWish,
+	value,
+	removeWish,
+	changeWishStatus,
 
-	const onNewItemChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		setNewItem(e.currentTarget.value)
-	}
+	... restProps
+}) => {
+	let [oS, setOS] = useState<OsTypeForSelect>("Select OS")
 
-	const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter') {
-			addItemHandler()
+	const [error2, setError2] = useState<null | string>(null)
 
-		}
-	}
 
-	const addItemHandler = () => {
-		if(os !== "Select OS"){
-			if (newItem.trim() !== "") {
-				props.addItem(newItem, os)
-				setNewItem("")
+	const addWishHandler = (value: string) => {
+		if (oS !== "Select OS") {
+			if (value.trim() !== "") {
+				addNewWish(value, oS)
 				setOS("Select OS")
-			}
-		}
-		else return
+				setError2(null)
+			} else setError2("Item was not selected")
+			return
+		} else setError2("OS is not selected")
 	}
 
-	const onChangeOSHandler = (e:ChangeEvent<HTMLSelectElement>) => {
+	const removeWishHandler = (id: string) => {
+		removeWish(id)
+	}
+	const onChangeOSHandler = (e: ChangeEvent<HTMLSelectElement>) => {
 		setOS(e.currentTarget.value as OsTypeForSelect)
+		if (e.currentTarget.value !== "Select OS") {
+			setError2(null)
+		}
+	}
+	const onChangeFilterOSHandler = (e: ChangeEvent<HTMLSelectElement>) => {
+		setOsFilter(e.currentTarget.value as OsType)
+	}
+	const onChangeFilterStatusHandler = (e: ChangeEvent<HTMLSelectElement>) => {
+		setStatusFilter(e.currentTarget.value as StatusTypeForSelect)
 	}
 
-	const removeTaskHandler = (taskId: string) => {
-		props.removeTask(taskId)
-	}
-	const ChangeOsHandler = (OsValue: OsType) => {
-		props.ChangeOs(OsValue)
-	}
-//newpush
-//push
-//commit + push
 	return (
-			<div>
-				<h1>Phones</h1>
+		<div>
+			<h1>Phones</h1>
+			<div style={{display: "flex", justifyContent: "space-between"}}>
 				<div>
-					<input placeholder={"Enter an item"}
-						   value={newItem}
-						   onChange={onNewItemChangeHandler}
-						   onKeyDown={onKeyPressHandler}/>
-					<select value={os} onChange={onChangeOSHandler}>
+					<SuperInput callBack={addWishHandler} placeholder={"Enter an item"}/>
+					{/*<input placeholder={"Enter an item"}*/}
+
+
+					{/*/>*/}
+					{error2 && <div style={{maxWidth: "80px"}} className={"error-message"}>{error2}</div>}
+
+				</div>
+				<div>
+					<select value={oS} onChange={onChangeOSHandler}>
 						<option value={"Select OS"}>Select OS</option>
 						<option value={"Android"}>Android</option>
 						<option value={"iOS"}>iOS</option>
 					</select>
-					<button onClick={addItemHandler}>Add</button>
 				</div>
-				<ul>
-					{props.wishes.map(el => {
-						return (
-							<li key={el.id}>
-								<input type="checkbox" checked={el.checked}/>
-								<span> {el.title} </span>
-								<span> / OS: </span>
-								<span> {el.OS} </span>
-								<button onClick={()=>removeTaskHandler(el.id)}>X</button>
-							</li>
-						)
-					})}
-				</ul>
 				<div>
-					FILTER BY:
+					{/*<button onClick={addWishHandler}>Add</button>*/}
+				</div>
+			</div>
+			<ul>
+				{wishes.map(el => {
+					const changeWishStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
+						changeWishStatus(el.id, e.currentTarget.checked)
+					}
+					return (
+						<li key={el.id} className={el.checked ? "selected" : ""}>
+							<input type="checkbox" checked={el.checked} onChange={changeWishStatusHandler}/>
+							<span> {el.title} </span>
+							<span> / OS: </span>
+							<span> {el.OS} </span>
+							<button onClick={() => removeWishHandler(el.id)}>X</button>
+						</li>
+					)
+				})}
+			</ul>
+			<div style={{display: "flex", justifyContent: "space-between"}}>
+				<div style={{marginRight: "20px"}}>
+					FILTER BY OS:
 					<div>
-						<select value={props.osFilter} onChange={(e) => ChangeOsHandler(e.currentTarget.value as OsType)}>
-							<option value="All">All</option>
-							<option value="Android">Android</option>
-							<option value="iOS">iOS</option>
+						<select value={osFilter} onChange={onChangeFilterOSHandler}>
+							<option value={"All"}>All</option>
+							<option value={"Android"}>Android</option>
+							<option value={"iOS"}>iOS</option>
+						</select>
+					</div>
+				</div>
+				<div>
+					FILTER BY ACTIVITY:
+					<div>
+						<select value={statusFilter} onChange={onChangeFilterStatusHandler}>
+							<option value={"All"}>All</option>
+							<option value={"Active"}>Active</option>
+							<option value={"Completed"}>Completed</option>
 						</select>
 					</div>
 				</div>
 			</div>
-		);
+		</div>
+	);
 }

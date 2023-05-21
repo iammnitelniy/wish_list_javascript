@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import './App.css';
-import {OsTypeForSelect, WishList} from "./WishList";
+import {OsTypeForSelect, StatusTypeForSelect, WishList} from "./WishList";
 import {v1} from "uuid";
 
 export type OsType = "All" | "iOS" | "Android" | OsTypeForSelect
@@ -11,8 +11,11 @@ export type WishesDataPropsType = {
 	OS: OsType
 	checked: boolean
 }
+
 function App() {
 	const [osFilter, setOsFilter] = useState<OsType>("All")
+	const [statusFilter, setStatusFilter] = useState<StatusTypeForSelect>("All")
+
 	const [wishes, setWishes] = useState<WishesDataPropsType[]>([
 		{id: v1(), title: 'Samsung Galaxy S23', OS: "Android", checked: true},
 		{id: v1(), title: 'IPhone 13 ProMax', OS: "iOS", checked: true},
@@ -21,29 +24,35 @@ function App() {
 		{id: v1(), title: 'Iphone 14', OS: "iOS", checked: false},
 	])
 
-	const addItem = (newItem: string, wishFilter: OsTypeForSelect) => {
-		let newWishItem = {id: v1(), title: newItem, OS: wishFilter, checked: false};
-		setWishes([newWishItem, ...wishes]);
+	const addNewWish = (title: string, oS: OsTypeForSelect) => {
+		setWishes([{id: v1(), title: title, OS: oS, checked: false}, ...wishes])
+	}
+	const removeWish = (id: string) => {
+		setWishes(wishes.filter(el => el.id !== id))
+	}
+	const wishesWhatWeWantToSee = (osFilter === "All" ? wishes : wishes.filter(el => el.OS === osFilter))
+
+	const wishesWhatWeWantToSeeFiltered = (statusFilter === "All" ? wishesWhatWeWantToSee : statusFilter === "Completed" ? wishesWhatWeWantToSee.filter(el => el.checked) : wishesWhatWeWantToSee.filter(el => !el.checked));
+
+	const changeWishStatus = (wishId: string, isDone: boolean) => {
+		setWishes(wishes.map(el => el.id === wishId ? {...el, checked: isDone} : el))
 	}
 
-	const removeTask = (taskId: string) => {
-		setWishes(wishes.filter(el => el.id !== taskId))
-	}
+	return (
+		<div className="App">
+			<WishList wishes={wishesWhatWeWantToSeeFiltered}
+					  addNewWish={addNewWish}
+					  osFilter={osFilter}
+					  setOsFilter={setOsFilter}
+					  // newWishTitle={newWishTitle}
+					  // setNewWishTitle={setNewWishTitle}
+					  removeWish={removeWish}
+					  changeWishStatus={changeWishStatus}
+					  statusFilter={statusFilter}
+					  setStatusFilter={setStatusFilter}
+			/>
+		</div>
+	);
+}
 
-	const ChangeOs = (osValue: OsType) => {
-		setOsFilter(osValue)
-	}
-
-	const wishesWhatWeWantToSee = osFilter === "All" ? wishes : wishes.filter(el=> el.OS === osFilter)
-		return (
-			<div className="App">
-				<WishList wishes={wishesWhatWeWantToSee}
-						  addItem={addItem}
-						  removeTask={removeTask}
-						  ChangeOs={ChangeOs}
-						  osFilter={osFilter}
-				/>
-			</div>
-		);
-	}
 export default App;
