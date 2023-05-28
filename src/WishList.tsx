@@ -1,6 +1,7 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 import {OsType, WishesDataPropsType} from "./App";
 import {SuperInput} from "./SuperComponents/SuperInput";
+import SuperButton from "./SuperComponents/SuperButton";
 
 export type OsTypeForSelect = "Android" | "iOS" | "Select OS"
 export type StatusTypeForSelect = "All" | "Active" | "Completed"
@@ -100,7 +101,8 @@ export const WishList: React.FC<WishListPropsType> = (
 							<span> {el.title} </span>
 							<span> / OS: </span>
 							<span> {el.OS} </span>
-							<button onClick={() => removeWishHandler(el.id)}>X</button>
+							<SuperButton callBack={() => removeWishHandler(el.id)} name={'x'}/>
+							{/*<button onClick={() => removeWishHandler(el.id)}>X</button>*/}
 						</li>
 					)
 				})}
