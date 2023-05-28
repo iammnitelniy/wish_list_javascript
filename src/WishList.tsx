@@ -2,6 +2,8 @@ import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 import {OsType, WishesDataPropsType} from "./App";
 import {SuperInput} from "./SuperComponents/SuperInput";
 import SuperButton from "./SuperComponents/SuperButton";
+import SuperCheckbox from "./SuperComponents/SuperCheckbox";
+import SuperSelect from "./SuperComponents/SuperSelect";
 
 export type OsTypeForSelect = "Android" | "iOS" | "Select OS"
 export type StatusTypeForSelect = "All" | "Active" | "Completed"
@@ -39,6 +41,8 @@ export const WishList: React.FC<WishListPropsType> = (
 	const [error2, setError2] = useState<null | string>(null)
 
 
+
+
 	const addWishHandler = (value: string) => {
 		if (oS !== "Select OS") {
 			if (value.trim() !== "") {
@@ -59,11 +63,11 @@ export const WishList: React.FC<WishListPropsType> = (
 			setError2(null)
 		}
 	}
-	const onChangeFilterOSHandler = (e: ChangeEvent<HTMLSelectElement>) => {
-		setOsFilter(e.currentTarget.value as OsType)
+	const onChangeFilterOSHandler = (value: string) => {
+		setOsFilter(value as OsType)
 	}
-	const onChangeFilterStatusHandler = (e: ChangeEvent<HTMLSelectElement>) => {
-		setStatusFilter(e.currentTarget.value as StatusTypeForSelect)
+	const onChangeFilterStatusHandler = (value: string) => {
+		setStatusFilter(value as StatusTypeForSelect)
 	}
 
 	return (
@@ -85,6 +89,9 @@ export const WishList: React.FC<WishListPropsType> = (
 						<option value={"Android"}>Android</option>
 						<option value={"iOS"}>iOS</option>
 					</select>
+
+					{/*<SuperSelect value={statusFilter} options = {[{value: 'Select OS', label: "Select OS"}, {value: 'Android', label: "Android"}, {value: 'iOS', label: "iOS"}]} callBack={onChangeOSHandler}/>*/}
+
 				</div>
 				<div>
 					{/*<button onClick={addWishHandler}>Add</button>*/}
@@ -92,12 +99,14 @@ export const WishList: React.FC<WishListPropsType> = (
 			</div>
 			<ul>
 				{wishes.map(el => {
-					const changeWishStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-						changeWishStatus(el.id, e.currentTarget.checked)
+					const changeWishStatusHandler = (filterValue: boolean) => {
+						changeWishStatus(el.id, filterValue)
 					}
+
 					return (
 						<li key={el.id} className={el.checked ? "selected" : ""}>
-							<input type="checkbox" checked={el.checked} onChange={changeWishStatusHandler}/>
+							<SuperCheckbox checked={el.checked} callBack={(filterValue:boolean)=>changeWishStatusHandler(filterValue)}/>
+							{/*<input type="checkbox" checked={el.checked} onChange={changeWishStatusHandler}/>*/}
 							<span> {el.title} </span>
 							<span> / OS: </span>
 							<span> {el.OS} </span>
@@ -110,22 +119,34 @@ export const WishList: React.FC<WishListPropsType> = (
 			<div style={{display: "flex", justifyContent: "space-between"}}>
 				<div style={{marginRight: "20px"}}>
 					FILTER BY OS:
+					{/*<div>*/}
+					{/*	<select value={osFilter} onChange={onChangeFilterOSHandler}>*/}
+					{/*		<option value={"All"}>All</option>*/}
+					{/*		<option value={"Android"}>Android</option>*/}
+					{/*		<option value={"iOS"}>iOS</option>*/}
+					{/*	</select>*/}
+					{/*</div>*/}
+
 					<div>
-						<select value={osFilter} onChange={onChangeFilterOSHandler}>
-							<option value={"All"}>All</option>
-							<option value={"Android"}>Android</option>
-							<option value={"iOS"}>iOS</option>
-						</select>
+						<SuperSelect value={osFilter} options = {[{value: 'All', label: "All"}, {value: 'Android', label: "Android"}, {value: 'iOS', label: "iOS"}]} callBack={onChangeFilterOSHandler}/>
+
+
 					</div>
+
+
 				</div>
 				<div>
 					FILTER BY ACTIVITY:
+					{/*<div>*/}
+					{/*	<select value={statusFilter} onChange={onChangeFilterStatusHandler}>*/}
+					{/*		<option value={"All"}>All</option>*/}
+					{/*		<option value={"Active"}>Active</option>*/}
+					{/*		<option value={"Completed"}>Completed</option>*/}
+					{/*	</select>*/}
+					{/*</div>*/}
 					<div>
-						<select value={statusFilter} onChange={onChangeFilterStatusHandler}>
-							<option value={"All"}>All</option>
-							<option value={"Active"}>Active</option>
-							<option value={"Completed"}>Completed</option>
-						</select>
+						<SuperSelect value={statusFilter} options = {[{value: 'All', label: "All"}, {value: 'Active', label: "Active"}, {value: 'Completed', label: "Completed"}]} callBack={onChangeFilterStatusHandler}/>
+
 					</div>
 				</div>
 			</div>

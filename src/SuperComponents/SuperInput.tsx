@@ -2,7 +2,6 @@ import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 import SuperButton from "./SuperButton";
 
 
-
 export type SuperInputPropsType = {
     callBack: (value: string) => void
     type?: string;
@@ -41,11 +40,11 @@ export const SuperInput: React.FC<SuperInputPropsType> = (
 
     return (
         <>
-        <input value={title} type={restProps.type} placeholder={restProps.placeholder} onChange={onChangeHandler}
-               className={error ? "error" : ""} onKeyDown={onKeyDownHandler}
-        />
+            <input value={title} type={restProps.type} placeholder={restProps.placeholder} onChange={onChangeHandler}
+                   className={error ? "error" : ""} onKeyDown={onKeyDownHandler}
+            />
             <SuperButton callBack={addHandler} name={'+'}/>
-        {/*<button onClick={addHandler}>+</button>*/}
+            {/*<button onClick={addHandler}>+</button>*/}
             {error && <div className={"error-message"}>{error}</div>}
         </>
 
