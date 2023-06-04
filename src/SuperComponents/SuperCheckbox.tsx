@@ -1,27 +1,33 @@
 import React, {ChangeEvent} from 'react';
-type SuperCheckboxPropsType = {
-    callBack: (filterValue: boolean) => void
-    checked: boolean
 
+
+type SuperCheckBoxPropsType = {
+    checked: boolean
+    callBack: (value: boolean)=> void
 }
 
 
-const SuperCheckbox: React.FC<SuperCheckboxPropsType> = (
+const SuperCheckbox: React.FC<SuperCheckBoxPropsType> = (
     {
-        callBack,
         checked,
+        callBack,
         ...restProps
     }
-
 ) => {
 
-    const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        callBack(e.currentTarget.checked)
 
-    }
+const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+
+    callBack(e.currentTarget.checked)
+
+}
 
     return (
-       <input type='checkbox' checked={checked} onChange={onChangeHandler}/>
+
+
+         <input type="checkbox" onChange={onChangeHandler} checked={checked}/>
+
+
     );
 };
 

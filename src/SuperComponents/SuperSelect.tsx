@@ -1,34 +1,31 @@
-import React from 'react';
+import React, {ChangeEvent} from 'react';
 
 type OptionType = {
-    value: string;
-    label: string;
-};
+    value: string
+    label: string
+}
 
 type SuperSelectPropsType = {
-    options: OptionType[];
-    value: string;
-    callBack: (value: string) => void;
-};
 
-const SuperSelect: React.FC<SuperSelectPropsType> = ({
-                                                         options,
-                                                         value,
-                                                         callBack,
-                                                     }) => {
-    const onChangeHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        callBack(event.target.value);
-    };
+    options: OptionType[]
+    callBack: (value: string) => void
+}
 
+export const SuperSelect: React.FC<SuperSelectPropsType> = (
+    {
+        options,
+        callBack,
+        ...restProps
+    }
+) => {
+
+    const onChangeHandler = (e: ChangeEvent<HTMLSelectElement>) => {
+            callBack(e.currentTarget.value)
+    }
     return (
-        <select value={value} onChange={onChangeHandler}>
-            {options.map((option, index) => (
-                <option key={index} value={option.value}>
-                    {option.label}
-                </option>
-            ))}
+        <select onChange={onChangeHandler}>
+            {options.map((el, index)=><option key={index} value={el.value}>{el.label}</option>)}
         </select>
     );
 };
 
-export default SuperSelect;

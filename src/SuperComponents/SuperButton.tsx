@@ -1,30 +1,19 @@
 import React from 'react';
-
 type SuperButtonPropsType = {
     callBack: () => void
     name: string
 }
 
 
-const SuperButton: React.FC<SuperButtonPropsType> = (
-    {
-        callBack,
-        name,
-        ...restProps
 
+export const SuperButton = (props:SuperButtonPropsType) => {
+   const {callBack, name} = props
+
+    const onClickHandler = () => {
+        callBack()
     }
-
-) => {
-
-   const onClickHandler = () => {
-
-       callBack()
-
-   }
-
     return (
-        <button onClick={onClickHandler}>{name}</button>
+       <button onClick={onClickHandler}>{name}</button>
     );
 };
 
-export default SuperButton;
