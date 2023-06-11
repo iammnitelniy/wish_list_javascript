@@ -20,28 +20,29 @@ export const SuperForm: React.FC<SuperInputPropsType> = (
     }
 ) => {
 
-const [value, setValue] = useState<string>("")
-
-
+    const [newValue, setNewValue] = useState<string>("")
 
     const onChangeHandler = (newValue: string) => {
-            setValue(newValue)
+        setNewValue(newValue)
         setError(null)
     }
-    const onKeyDownHandler = (onKeyDownValue: string) => {
-        if (onKeyDownValue === "Enter") {
+
+
+    const onKeyDownCallBack = (key: string) => {
+        if (key === "Enter") {
             onClickHandler()
         }
     }
+
     const onClickHandler = () => {
-            callBack(value)
-            setValue("")
+            callBack(newValue)
+            setNewValue("")
     }
 
     return (
 
         <div>
-            <SuperInput callBack={onChangeHandler} value={value} onKeyDownHandlerCallBack={onKeyDownHandler}/>
+            <SuperInput callBack={onChangeHandler} value={newValue} onKeyDownCallBack={onKeyDownCallBack}/>
             {/*<input value={newValue} onChange={onChangeHandler} onKeyDown={onKeyDownHandler}/>*/}
             <SuperButton callBack={onClickHandler} name={"Add"}/>
         </div>
