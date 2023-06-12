@@ -3,6 +3,7 @@ import {OsType, WishesDataType, WishType} from "./App";
 import {SuperForm} from "./superComponents/SuperForm";
 import SuperCheckbox from "./superComponents/SuperCheckbox";
 import {SuperSelect} from "./superComponents/SuperSelect";
+import {EditableSpan} from "./superComponents/EditableSpan";
 
 export type FilterTypeForSelect = "usual" | "important" | "Select"
 export type StatusTypeForSelect = "All" | "Active" | "Completed"
@@ -18,6 +19,8 @@ export type WishListPropsType = {
 	changeWishStatus: (wishlistId: string, wishId: string, statusValue: boolean) => void
 	wishlistID: string
 	category: string
+	changeWishlistTitle: (wishListID: string, newTitle: string) => void
+	changeImportantStatus: (wishListID: string, wishID: string, newTitle: string) => void
 }
 
 export const WishList = (props: WishListPropsType) => {
@@ -66,9 +69,19 @@ export const WishList = (props: WishListPropsType) => {
 			props.changeWishStatus( props.wishlistID, wishId, value)
 	}
 
+	const changeWishlistTitleHandler = (newTitle: string) => {
+		props.changeWishlistTitle(props.wishlistID, newTitle)
+	}
+	const changeImportantStatusHandler = (wishID: string, newTitle: string) => {
+
+		props.changeImportantStatus(props.wishlistID, wishID, newTitle)
+
+	}
+
 	return (
 		<div>
-			<h1>{props.category}</h1>
+			<EditableSpan title={props.category} editContent={changeWishlistTitleHandler}/>
+			{/*<h1>{props.category}</h1>*/}
 			<div style={{display: "flex", justifyContent: "space-between"}}>
 				<div>
 					<SuperForm callBack={addWishHandler} setError={setError}/>
@@ -104,7 +117,7 @@ export const WishList = (props: WishListPropsType) => {
 	<SuperCheckbox checked={el.checked} callBack={(value)=>{changeStatusHandler(el.id, value)}}		 />
 							<span> {el.title} </span>
 							<span> / status: </span>
-							<span> {el.status} </span>
+							<EditableSpan title={el.status} editContent={(newTitle: string)=>changeImportantStatusHandler(el.id, newTitle)}/>
 							<button onClick={() => removeWishHandler(el.id)}>X</button>
 						</li>
 					)

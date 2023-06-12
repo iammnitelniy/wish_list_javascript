@@ -124,6 +124,8 @@ function App() {
             id: newWishListId, category: wishlistTitle, filterByActivity: "All", filterByStatus: "All"
         }
 
+
+
         setWishlists([newWishlist ,...wishLists])
         setWishes({...wishes, [newWishListId]: []})
         // setFilterState({
@@ -149,7 +151,18 @@ function App() {
         // select Activity
 
     }
+
+
+
+    const changeWishlistTitle = (wishListID: string, newTitle: string ) => {
+       setWishlists( wishLists.map(el=> el.id === wishListID ? {...el, category: newTitle} : el))
+    }
     console.log(wishes)
+
+    const changeImportantStatus = (wishListID: string, wishID: string, newTitle: string) => {
+        setWishes({...wishes, [wishListID]: wishes[wishListID].map(el=> el.id === wishID ? {...el, status: newTitle} : el)})
+        console.log(newTitle)
+    }
 
     return (
 
@@ -185,6 +198,8 @@ function App() {
 
                 return <WishList
                     key={wl.id}
+                    changeImportantStatus = {changeImportantStatus}
+                    changeWishlistTitle={changeWishlistTitle}
                     wishlistID={wl.id}
                     wishes={wishesWhatWeWantToSeeGeneral}
                     addNewWish={addNewWish}
