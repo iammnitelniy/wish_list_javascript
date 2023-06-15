@@ -148,3 +148,5 @@ export const WishList = (props: WishListPropsType) => {
 		</div>
 	);
 }
+
+//commit
