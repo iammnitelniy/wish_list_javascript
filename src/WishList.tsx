@@ -42,6 +42,7 @@ export const WishList = (props: WishListPropsType) => {
 		setOS(value as FilterTypeForSelect)
 		setError(null)
 	}
+	//error
 	const onChangeFilterImportantHandler = (value: string) => {
 		const filterId = "filterByImportant"
 		props.changeFilterValue(props.wishlistID, value as OsType, filterId)
