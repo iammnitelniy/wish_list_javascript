@@ -6,14 +6,21 @@ export const wishlistID1 = v1();
 export const wishlistID2 = v1()
 
 const initialState: WishlistType[] = [
-    {id: wishlistID1, category: "phones", filterByActivity: 'All', filterByStatus: 'All'},
-    {id: wishlistID2, category: "books", filterByActivity: 'All', filterByStatus: 'All'}
+    {id: wishlistID1, category: "phones", filterByActivity: 'All', filterByStatus: 'All', order: 1},
+    {id: wishlistID2, category: "books", filterByActivity: 'All', filterByStatus: 'All', order: 2}
 ]
 
 export const wishListReducer = (state: WishlistType[]=initialState, action: MainType): WishlistType[] => {
         switch (action.type) {
             case 'ADD-WISHLIST': {
-                const newWishList: WishlistType = {id: action.payload.wishListId, category: action.payload.title, filterByActivity: 'All', filterByStatus: 'All'}
+
+
+                let countForOrder = 2
+                state.forEach(el => el.order > countForOrder ? countForOrder = el.order : countForOrder)
+
+                const newWishList: WishlistType = {id: action.payload.wishListId, category: action.payload.title, filterByActivity: 'All', filterByStatus: 'All', order: countForOrder + 1}
+                console.log(newWishList)
+
                 return [...state, newWishList]
             }
             case 'REMOVE-WISHLIST': {
@@ -29,11 +36,22 @@ export const wishListReducer = (state: WishlistType[]=initialState, action: Main
                     return state.map(el => el.id === action.payload.wishlistID ? {...el, filterByActivity: action.payload.filterValue} : el)
                 }
             }
+            case 'CHANGE-ORDER': {
+                return state.map(el => {
+                    if (el.id === action.payload.startId) {
+                        return {...el, order: action.payload.finishOrder};
+                    } else if (el.id === action.payload.finishId) {
+                        return {...el, order: action.payload.startOrder};
+                    } else {
+                        return el;
+                    }
+                });
+            }
             default: return state
         }
 }
 
-export type MainType = AddWishListACType | RemoveWishListACType | ChangeWishListTitleACType | ChangeWishListFilterACType
+export type MainType = AddWishListACType | RemoveWishListACType | ChangeWishListTitleACType | ChangeWishListFilterACType | ChangeWishListOrderACType
 
 export type AddWishListACType = ReturnType<typeof addWishListAC>
 export const addWishListAC = (title: string) => {
@@ -68,6 +86,14 @@ export const changeWishListFilterAC = (wishlistID: string, filterId: string, fil
     return {
         type: 'CHANGE-WISHLIST-FILTER',
         payload: {wishlistID, filterId, filterValue}
+    } as const
+}
+
+export type ChangeWishListOrderACType = ReturnType<typeof ChangeWishListOrderAC>
+export const ChangeWishListOrderAC = (startId: string, startOrder: number, finishId: string, finishOrder: number )=>{
+    return {
+        type: 'CHANGE-ORDER',
+        payload: {startId, startOrder, finishId, finishOrder}
     } as const
 }
 

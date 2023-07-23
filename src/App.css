@@ -1,15 +1,24 @@
 .App {
     padding: 30px;
     display: flex;
-
+    width: 200vh;
+    flex-wrap: wrap;
 }
 
 .App > div {
-    margin-right: 50px;
+    margin: 50px;
+    border: 1px solid;
+    width: 300px;
+    min-height: 300px;
+    padding: 1px;
+    cursor: grab;
 }
 
 .error {
     border: red 1px solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .error-message {

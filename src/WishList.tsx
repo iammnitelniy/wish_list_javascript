@@ -1,4 +1,5 @@
 import React, {memo, useCallback, useState} from 'react';
+import { DragEvent } from 'react';
 import {OsType, WishType} from "./AppWithRedux";
 import {SuperForm} from "./superComponents/SuperForm";
 import SuperCheckbox from "./superComponents/SuperCheckbox";
@@ -9,7 +10,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppRootReducerType} from "./redux/store";
 import {WishesDataType, WishlistType} from "./AppWithRedux";
 import {addNewWishAC, changeWishStatusAC, removeWishAC} from "./reducers/wishesReducer";
-import {changeWishListFilterAC, changeWishListTitleAC, removeWishListAC} from "./reducers/wishListReducer";
+import {
+	changeWishListFilterAC,
+	ChangeWishListOrderAC,
+	changeWishListTitleAC,
+	removeWishListAC
+} from "./reducers/wishListReducer";
 
 export type FilterTypeForSelect = "usual" | "important" | "Select"
 export type StatusTypeForSelect = "All" | "Active" | "Completed"
@@ -20,6 +26,8 @@ export type WishListPropsType = {
 	activityFilter: OsType
 	wishlistID: string
 	category: string
+	order: number
+
 }
 export const WishList = (props: WishListPropsType) => {
 
@@ -70,8 +78,46 @@ export const WishList = (props: WishListPropsType) => {
 	const removeWishListHandler = () => {
 		dispatch(removeWishListAC(props.wishlistID))
 	}
+
+	const [currentOrder, setCurrentOrder] = useState<any>(1)
+	const [currentIdForOrder, setCurrentIdForOrder] = useState<any>(null)
+
 	return (
-		<div>
+		<div
+			data-order={props.order}
+			id={props.wishlistID}
+			onDragStart={(e: DragEvent<HTMLDivElement>)=>{
+				console.log('drag', e.currentTarget.id, props.order);
+				setCurrentOrder(e.currentTarget.getAttribute('data-order'));
+				setCurrentIdForOrder(e.currentTarget.id);
+				e.dataTransfer.setData('text/plain', e.currentTarget.id);
+			}}
+			onDragLeave={(e: DragEvent<HTMLDivElement>)=>{}}
+			onDragEnd={(e: DragEvent<HTMLDivElement>)=>{
+
+				e.currentTarget.style.background = 'white'
+
+
+
+
+			}}
+			onDragOver={(e: DragEvent<HTMLDivElement>)=>{e.preventDefault()
+				e.preventDefault()
+				e.currentTarget.style.background = 'lightgrey'
+			}
+		}
+			onDrop={(e: DragEvent<HTMLDivElement>)=>{
+				e.preventDefault();
+				e.currentTarget.style.background = 'white';
+				const startId = e.dataTransfer.getData('text/plain');
+				const startOrder = currentOrder;
+				const finishId = e.currentTarget.id;
+				const finishOrder = Number(e.currentTarget.getAttribute('data-order'));
+				console.log('drop', e.currentTarget.id, props.order)
+				dispatch(ChangeWishListOrderAC(startId, startOrder, finishId, finishOrder));
+			}}
+			draggable={true}
+		>
 			<EditableSpan callBack={changeWishListTitleHandler} value={props.category}/>
 			<SuperButton callBack={removeWishListHandler} name={"X"}/>
 			<div style={{display: "flex", justifyContent: "space-between"}}>

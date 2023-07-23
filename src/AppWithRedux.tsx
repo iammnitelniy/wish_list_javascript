@@ -17,7 +17,7 @@ import {AppRootReducerType} from "./redux/store";
 
 export type OsType = "All" | 'important' | "usual" | FilterTypeForSelect | StatusTypeForSelect
 export type WishlistType = {
-    id: string, category: string, filterByActivity: OsType, filterByStatus: OsType
+    id: string, category: string, filterByActivity: OsType, filterByStatus: OsType, order: number
 }
 export type WishType = { id: string, title: string, status: string, checked: boolean }
 export type WishesDataType = {
@@ -45,22 +45,31 @@ export function AppWithRedux() {
 
     }
 
+    const sortCards = (a: WishlistType, b: WishlistType) => {
+        if (a.order > b.order) {
+            return 1
+        } else {
+            return -1
+        }
+    }
 
     return (
-        <div className="App">
-            <div>
+        <div className="App"
+        >
+            <span>
                 <SuperInput callBack={setWishlistTitle} value={wishlistTitle} onKeyDownCallBack={() => {
                 }}/>
 
                 <SuperButton callBack={addNewWishList} name={"Add"}/>
-            </div>
-            {wishLists.map((wl) => {
+            </span>
+            {wishLists.sort(sortCards).map((wl) => {
                 const wishesWhatWeWantToSee = wl.filterByStatus === 'All' ? wishes[wl.id] : wishes[wl.id].filter(el => el.status === wl.filterByStatus)
                 const wishesWhatWeWantToSeeGeneral = wl.filterByActivity === 'All' ? wishesWhatWeWantToSee :
                     wishesWhatWeWantToSee.filter(el => wl.filterByActivity === 'Active' ? !el.checked : el.checked)
                 return <WishList
                     key={wl.id}
                     wishlistID={wl.id}
+                    order={wl.order}
                     wishes={wishesWhatWeWantToSeeGeneral}
                     activityFilter={wl.filterByActivity}
                     valueOfImportantFilter={wl.filterByStatus}
