@@ -1,8 +1,8 @@
 import {v1} from "uuid";
-import {WishesDataType} from "../App";
+import {WishesDataType} from "../AppWithRedux";
 import {addNewWishAC, changeWishStatusAC, removeWishAC, wishesReducer} from "./wishesReducer";
 test('should add new wish', () => {
-		const startState: WishesDataType = {
+		const startState:WishesDataType = {
 			["wishlistID1"]: [
 				{id: v1(), title: 'Samsung Galaxy S23', status: "usual", checked: true},
 				{id: v1(), title: 'IPhone 13 ProMax', status: 'important', checked: true},

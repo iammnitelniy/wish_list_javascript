@@ -1,32 +1,26 @@
-
-
-import {WishesDataType} from "../App";
-import {AddWishListACType, RemoveWishListACType} from "./wishListReducer";
+import {WishesDataType} from "../AppWithRedux";
+import {AddWishListACType, RemoveWishListACType, wishlistID1, wishlistID2} from "./wishListReducer";
 import {FilterTypeForSelect} from "../WishList";
 import {v1} from "uuid";
-import {wishlistID1, wishlistID2} from "../AppWithRedux";
 
 
-
-const initialState = {
-//     [wishlistID1]: [
-//     {id: v1(), title: 'Samsung Galaxy S23', status: "usual", checked: true},
-//     {id: v1(), title: 'IPhone 13 ProMax', status: 'important', checked: true},
-//     {id: v1(), title: 'Xiaomi 13', status: "usual", checked: true},
-//     {id: v1(), title: 'Huawei', status: "usual", checked: false},
-//     {id: v1(), title: 'Iphone 14', status: 'important', checked: false}
-// ],
-//     [wishlistID2]: [
-//     {id: v1(), title: 'Hamlet ', status: "usual", checked: true},
-//     {id: v1(), title: 'The Odyssey ', status: "important", checked: true},
-//     {id: v1(), title: 'Sherlock Holmes', status: "usual", checked: true},
-//     {id: v1(), title: 'Don Quixote', status: "important", checked: false},
-//     {id: v1(), title: 'HeadFirst JS', status: "usual", checked: false}]
+const initialState: WishesDataType = 	{
+    [wishlistID1]: [
+        {id: v1(), title: 'Samsung Galaxy S23', status: "usual", checked: true},
+        {id: v1(), title: 'IPhone 13 ProMax', status: 'important', checked: true},
+        {id: v1(), title: 'Xiaomi 13', status: "usual", checked: true},
+        {id: v1(), title: 'Huawei', status: "usual", checked: false},
+        {id: v1(), title: 'Iphone 14', status: 'important', checked: false}
+    ],
+    [wishlistID2]: [
+        {id: v1(), title: 'Hamlet ', status: "usual", checked: true},
+        {id: v1(), title: 'The Odyssey ', status: "important", checked: true},
+        {id: v1(), title: 'Sherlock Holmes', status: "usual", checked: true},
+        {id: v1(), title: 'Don Quixote', status: "important", checked: false},
+        {id: v1(), title: 'HeadFirst JS', status: "usual", checked: false}]
 }
 
-
-
-export const wishesReducer = (state: WishesDataType = initialState, action: WishesMainType):WishesDataType => {
+export const wishesReducer = (state: WishesDataType= initialState, action: WishesMainType):WishesDataType => {
     switch (action.type) {
         case 'ADD-WISHLIST': {
           return   {...state, [action.payload.wishListId]: []}
