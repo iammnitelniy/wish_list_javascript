@@ -5,7 +5,7 @@ type SuperInputPropsType = {
 	value: string
 	onKeyDownCallBack: (key: string) => void
 }
-export const SuperInput: React.FC<SuperInputPropsType> = ({onKeyDownCallBack,value,callBack,...restProps}) => {
+export const InputUniversal: React.FC<SuperInputPropsType> = ({onKeyDownCallBack,value,callBack,...restProps}) => {
 	const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		callBack(e.currentTarget.value)
 	}

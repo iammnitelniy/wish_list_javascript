@@ -1,13 +1,15 @@
-import React, {memo, useState} from 'react';
-import {OsType, WishType} from "./AppWithRedux";
-import {SuperForm} from "./superComponents/SuperForm";
-import SuperCheckbox from "./superComponents/SuperCheckbox";
-import {SuperSelect} from "./superComponents/SuperSelect";
-import {EditableSpan} from "./superComponents/Editable";
-import {SuperButton} from "./superComponents/SuperButton";
+import React, {FC, memo, useState} from 'react';
+import {OsType, WishType} from "./app/App";
+
 import {useDispatch} from "react-redux";
-import {addNewWishAC, changeWishStatusAC, changeWishTitleAC, removeWishAC} from "./reducers/wishesReducer";
-import {changeWishListFilterAC, changeWishListTitleAC, removeWishListAC} from "./reducers/wishListReducer";
+import {EditableSpan} from "./common/SuperComponents/Editable";
+import {SuperForm} from "./common/SuperComponents/SuperForm";
+import SuperCheckbox from "./common/SuperComponents/SuperCheckbox";
+import {SuperSelect} from "./common/SuperComponents/SuperSelect";
+import {wishListsActions} from "./reducers/wishListReducer";
+import {wishesActions} from "./reducers/wishesReducer";
+import {ButtonUniversal} from "./common/SuperComponents/ButtonUniversal";
+
 
 export type FilterTypeForSelect = "Usual" | "Important" | "Select"
 export type StatusTypeForSelect = "All" | "Active" | "Completed"
@@ -18,20 +20,20 @@ export type WishListPropsType = {
 	wishlistID: string
 	category: string
 }
-export const WishList = memo((props: WishListPropsType) => {
+export const WishList: FC<WishListPropsType> = memo(({wishes, valueOfImportantFilter, activityFilter, wishlistID, category}) => {
 	const dispatch = useDispatch()
 	const [error, setError] = useState<string | null>(null)
 	const [oS, setOS] = useState<FilterTypeForSelect>("Select")
 	const addWishHandler = (newValue: string) => {
 		if (oS !== "Select") {
 			if (newValue.trim() !== "") {
-				dispatch(addNewWishAC(props.wishlistID, oS, newValue))
+				dispatch(wishesActions.addWish({wishlistId: wishlistID, oS, newValue}))
 				setOS("Select")
 			} else setError("Type wish name")
 		} else setError("Select wish status")
 	}
 	const removeWishHandler = (id: string) => {
-		dispatch(removeWishAC(props.wishlistID, id))
+		dispatch(wishesActions.removeWish({wishlistID: wishlistID, id}))
 	}
 	const onChangeOSHandler = (value: string) => {
 		setOS(value as FilterTypeForSelect)
@@ -39,32 +41,34 @@ export const WishList = memo((props: WishListPropsType) => {
 	}
 	const onChangeFilterImportantHandler = (value: string) => {
 		const filterId = "filterByImportant"
-		dispatch(changeWishListFilterAC(props.wishlistID, filterId as OsType, value as OsType))
+		dispatch(wishListsActions.changeWishListFilter({wishlistID, filterId: filterId as OsType, filterValue: value as OsType}))
 	}
 	const onChangeActivityFilterHandler = (value: string) => {
 		const filterId = "filterByActivity"
-		dispatch(changeWishListFilterAC(props.wishlistID, filterId as OsType, value as OsType))
+		dispatch(wishListsActions.changeWishListFilter({wishlistID, filterId: filterId as OsType, filterValue: value as OsType}))
+
 	}
 	const changeStatusHandler = (wishId: string, value: boolean) => {
-		dispatch(changeWishStatusAC(props.wishlistID, wishId, value))
+		dispatch(wishesActions.changeWishStatus({wishlistID: wishlistID, wishId, statusValue: value}))
 	}
 	const changeWishListTitleHandler = (newTitle: string) => {
-		dispatch(changeWishListTitleAC(props.wishlistID, newTitle))
+		dispatch(wishListsActions.changeWishListTitle({wishlistID, newTitle}))
 	}
 	const changeWishTitleHandler = (wishId: string, newTitle: string) => {
-		dispatch(changeWishTitleAC(props.wishlistID, wishId, newTitle))
+		dispatch(wishesActions.changeWishTitle({wishlistID, wishId, newTitle}))
 	}
 	const removeWishListHandler = () => {
-		dispatch(removeWishListAC(props.wishlistID))
+		dispatch(wishListsActions.removeWishlist({wishListId: wishlistID}))
 	}
 	return (
 		<div className="wishlist__cards-item">
 			<div className="wishlist__title-container">
 					<div className={"wishlist__title-container__editable-span"}>
-						<EditableSpan callBack={changeWishListTitleHandler} value={props.category}/>
+						<ButtonUniversal callBack={removeWishListHandler} name={'X'} />
+						<EditableSpan callBack={changeWishListTitleHandler} value={category}/>
 					</div>
 				<div className={"wishlist__title-container__super-button"}>
-					<SuperButton callBack={removeWishListHandler} name={"X"}/>
+
 				</div>
 
 			</div>
@@ -89,7 +93,7 @@ export const WishList = memo((props: WishListPropsType) => {
 						<div className="row-item status">Status</div>
 						<div className="row-item"></div>
 					</div>
-					{props.wishes.map((el: WishType) => {
+					{wishes.map((el: WishType) => {
 						return (
 							<div className={el.checked ? "table-row selected" : "table-row"} key={el.id}>
 								<div className="row-item checkbox">
@@ -113,7 +117,7 @@ export const WishList = memo((props: WishListPropsType) => {
 				<div className={"wishlist__card-filter-container"}>
 					<div className={"wishlist__card-filter-title"}>FILTER BY IMPORTANCE:</div>
 					<div className={"wishlist__card-filter-select"}>
-						<SuperSelect value={props.valueOfImportantFilter} options={[{value: 'All', label: "All"}, {
+						<SuperSelect value={valueOfImportantFilter} options={[{value: 'All', label: "All"}, {
 							value: "Usual",
 							label: "Usual"
 						}, {value: 'Important', label: "Important"}]} callBack={onChangeFilterImportantHandler}/>
@@ -122,7 +126,7 @@ export const WishList = memo((props: WishListPropsType) => {
 				<div className={"wishlist__card-filter-container"}>
 					<div className={"wishlist__card-filter-title"}>FILTER BY ACTIVITY:</div>
 					<div className={"wishlist__card-filter-select"}>
-						<SuperSelect value={props.activityFilter} options={[{value: 'All', label: "All"}, {
+						<SuperSelect value={activityFilter} options={[{value: 'All', label: "All"}, {
 							value: "Active",
 							label: "Active"
 						}, {value: 'Completed', label: "Completed"}]} callBack={onChangeActivityFilterHandler}/>

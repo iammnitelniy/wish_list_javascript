@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {SuperButton} from "./SuperButton";
-import {SuperInput} from "./SuperInput";
+import {InputUniversal} from "./InputUniversal";
+import {ButtonUniversal} from "./ButtonUniversal";
+
 type SuperInputPropsType = {
     callBack: (newValue: string) => void
     setError: (value: string | null) => void
@@ -22,8 +23,8 @@ export const SuperForm: React.FC<SuperInputPropsType> = ({callBack,setError}) =>
     }
     return (
         <div>
-            <SuperInput callBack={onChangeHandler} value={newValue} onKeyDownCallBack={onKeyDownCallBack}/>
-            <SuperButton callBack={onClickHandler} name={"Add"}/>
+            <InputUniversal callBack={onChangeHandler} value={newValue} onKeyDownCallBack={onKeyDownCallBack}/>
+            <ButtonUniversal callBack={onClickHandler} name={"Add"}/>
         </div>
     );
 };

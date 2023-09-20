@@ -1,12 +1,21 @@
-import {combineReducers, legacy_createStore} from "redux";
-import {wishListReducer} from "../reducers/wishListReducer";
-import {wishesReducer} from "../reducers/wishesReducer";
 
-export const AppRootReducer = combineReducers({
-    wishLists: wishListReducer,
-    wishes: wishesReducer
-})
-export type AppRootReducerType = ReturnType<typeof AppRootReducer>
-export const store = legacy_createStore(AppRootReducer)
+import {configureStore} from "@reduxjs/toolkit";
+import {wishLists} from "../reducers/wishListReducer";
+import {wishes} from "../reducers/wishesReducer";
 
 
+
+export const store = configureStore({
+    reducer: {
+        wishLists,
+        wishes
+
+    },
+});
+export type AppRootStateType = ReturnType<typeof store.getState>;
+
+export type AppDispatch = typeof store.dispatch;
+
+
+// @ts-ignore
+window.store = store;

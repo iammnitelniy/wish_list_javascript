@@ -3,7 +3,7 @@ type SuperButtonPropsType = {
 	callBack: () => void
 	name: string
 }
-export const SuperButton = (props: SuperButtonPropsType) => {
+export const ButtonUniversal = (props: SuperButtonPropsType) => {
 	const {callBack, name} = props
 	const onClickHandler = () => {
 		callBack()

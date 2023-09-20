@@ -1,12 +1,13 @@
 import React, {DragEvent, useState} from 'react';
 import './App.css';
-import {FilterTypeForSelect, StatusTypeForSelect, WishList} from "./WishList";
-
-import {SuperInput} from "./superComponents/SuperInput";
-import {SuperButton} from "./superComponents/SuperButton";
-import {addWishListAC,changeWishListOrderAC} from "./reducers/wishListReducer";
+import {FilterTypeForSelect, StatusTypeForSelect, WishList} from "../WishList";
 import {useDispatch, useSelector} from "react-redux";
-import {AppRootReducerType} from "./redux/store";
+import {ButtonUniversal} from "../common/SuperComponents/ButtonUniversal";
+import {InputUniversal} from "../common/SuperComponents/InputUniversal";
+import {wishListsActions} from "../reducers/wishListReducer";
+import {v1} from "uuid";
+import {AppRootStateType} from "../redux/store";
+
 
 export type OsType = "All" | 'Important' | "Usual" | FilterTypeForSelect | StatusTypeForSelect
 export type WishlistType = {
@@ -16,18 +17,19 @@ export type WishType = { id: string, title: string, status: string, checked: boo
 export type WishesDataType = {
 	[key: string]: WishType[]
 }
-export function AppWithRedux() {
+export function App() {
 	const [wishlistTitle, setWishlistTitle] = useState<string>("")
 	const [currentWishList, setCurrentWishList] = useState<WishlistType | null>(null)
 	const dispatch = useDispatch()
-	const wishLists = useSelector<AppRootReducerType, WishlistType[]>((store) => {
+	const wishLists = useSelector<AppRootStateType, WishlistType[]>((store) => {
 		return store.wishLists
 	})
-	const wishes = useSelector<AppRootReducerType, WishesDataType>((store) => {
+
+	const wishes = useSelector<AppRootStateType, WishesDataType>((store) => {
 		return store.wishes
 	})
 	const addNewWishList = () => {
-		const action = addWishListAC(wishlistTitle)
+		const action = wishListsActions.addWishlist({wishListId: v1(), title: wishlistTitle})
 		dispatch(action)
 		setWishlistTitle("")
 	}
@@ -50,21 +52,21 @@ export function AppWithRedux() {
 	const onDropHandler = (e: DragEvent<HTMLDivElement>, wl: WishlistType) => {
 		e.preventDefault()
 		const leaveWishlist = wishLists.find(el => el.id === wl.id) as WishlistType
-		dispatch(changeWishListOrderAC(currentWishList as WishlistType, leaveWishlist))
+		dispatch(wishListsActions.changeWishListOrder({currentWishList: currentWishList as WishlistType, leaveWishList: leaveWishlist as WishlistType}))
 	}
     return (
 		<div className="App wishlist">
 			<div className="wishlist__adding-form">
 				<div className="wishlist__adding-form__title">Adding new Wishlist</div>
 				<div className="wishlist__adding-form__input-with-button">
-					<SuperInput callBack={setWishlistTitle} value={wishlistTitle}
+					<InputUniversal callBack={setWishlistTitle} value={wishlistTitle}
 								onKeyDownCallBack={(e) => {keyDownForAddWishlist(e)}}/>
-					<SuperButton callBack={addNewWishList} name={"Add"}/>
+					<ButtonUniversal callBack={addNewWishList} name={"Add"}/>
 				</div>
 
 			</div>
 			<div className="wishlist__cards">
-				{wishLists.sort((a, b) => a.order - b.order).map((wl) => {
+				{wishLists?.sort((a, b) => a.order - b.order).map((wl) => {
 					const wishesWhatWeWantToSee = wl.filterByStatus === 'All' ? wishes[wl.id]
 						: wishes[wl.id].filter(el => el.status === wl.filterByStatus)
 					const wishesWhatWeWantToSeeGeneral = wl.filterByActivity === 'All' ? wishesWhatWeWantToSee :
