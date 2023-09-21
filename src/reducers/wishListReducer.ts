@@ -11,25 +11,36 @@ const initialState: WishlistType[] = [
 
 
 const slice = createSlice({
-    name: 'wishList',
-    initialState,
-    reducers: {
-        addWishlist: (state, action: PayloadAction<{wishListId: string ,title: string }>) => {
+        name: 'wishList',
+        initialState,
+        reducers: {
+            addWishlist: (state, action: PayloadAction<{ wishListId: string, title: string }>) => {
 
-            const newWishList: WishlistType = {
-                id: action.payload.wishListId,
-                category: action.payload.title,
-                filterByActivity: 'All',
-                filterByStatus: 'All',
-                order: state.length
-            }
+                const newWishList: WishlistType = {
+                    id: action.payload.wishListId,
+                    category: action.payload.title,
+                    filterByActivity: 'All',
+                    filterByStatus: 'All',
+                    order: state.length
+                }
 
-            state.unshift(newWishList)
-        },
-        removeWishlist: (state, action: PayloadAction<{ wishListId: string }>) => {
-            const index = state.findIndex((wl) => wl.id === action.payload.wishListId);
-            if (index !== -1) state.splice(index, 1);
-        },
+                state.push(newWishList)
+            },
+            removeWishlist: (state, action: PayloadAction<{ wishListId: string }>) => {
+                const {wishListId} = action.payload;
+
+                if (state) {
+                // Фильтруем исключая wishListId
+                    const index = state.findIndex((todo) => todo.id === action.payload.wishListId);
+                    if (index !== -1) state.splice(index, 1);
+
+                // Обновляем порядок оставшихся элементов
+                state?.forEach((wl, index) => {
+                    wl.order = index;
+
+                })
+            }},
+
         changeWishListTitle: (state, action: PayloadAction<{ wishlistID: string, newTitle: string }>) => {
             const wishList = state.find((wl) => wl.id === action.payload.wishlistID);
             if (wishList) {
@@ -55,22 +66,26 @@ const slice = createSlice({
             }
 		},
 		changeWishListOrder: (state, action: PayloadAction<{ currentWishList: WishlistType, leaveWishList: WishlistType }>) => {
-			const startWishListOrder = action.payload.currentWishList.order
-			const leaveWishListOrder = action.payload.leaveWishList.order
-			const wishListStart = state.find((wl) => wl.id === action.payload.currentWishList.id);
-			const wishListEnd = state.find((wl) => wl.id === action.payload.leaveWishList.id);
+            const { currentWishList, leaveWishList } = action.payload;
+            const startWishListOrder = currentWishList.order;
+            const leaveWishListOrder = leaveWishList.order;
+
+            state.forEach((wishlist) => {
+                    if (wishlist.id === currentWishList.id) {
+                        wishlist.order = leaveWishListOrder;
+                    } else if (wishlist.id === leaveWishList.id) {
+                        wishlist.order = startWishListOrder;
+                    }})
 
 
-			if (wishListStart && wishListEnd) {
 
-				if (state.find((wl) => action.payload.currentWishList.id)) {
-					wishListStart.order = leaveWishListOrder
-				}
-				else {
-					wishListStart.order = startWishListOrder
-				}
+        },
 
-			}
+        wishlistsSort: (state, action: unknown) => {
+
+            state.sort((a, b) => a.order - b.order)
+
+
 		},
 
 

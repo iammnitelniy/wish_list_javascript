@@ -1,4 +1,4 @@
-import React, {DragEvent, useState} from 'react';
+import React, {DragEvent, useEffect, useState} from 'react';
 import './App.css';
 import {FilterTypeForSelect, StatusTypeForSelect, WishList} from "../WishList";
 import {useDispatch, useSelector} from "react-redux";
@@ -21,13 +21,27 @@ export function App() {
 	const [wishlistTitle, setWishlistTitle] = useState<string>("")
 	const [currentWishList, setCurrentWishList] = useState<WishlistType | null>(null)
 	const dispatch = useDispatch()
+
+
+
 	const wishLists = useSelector<AppRootStateType, WishlistType[]>((store) => {
 		return store.wishLists
 	})
 
+
+	console.log(wishLists)
+
+
+
+
 	const wishes = useSelector<AppRootStateType, WishesDataType>((store) => {
 		return store.wishes
 	})
+
+
+
+
+
 	const addNewWishList = () => {
 		const action = wishListsActions.addWishlist({wishListId: v1(), title: wishlistTitle})
 		dispatch(action)
@@ -53,8 +67,12 @@ export function App() {
 		e.preventDefault()
 		const leaveWishlist = wishLists.find(el => el.id === wl.id) as WishlistType
 		dispatch(wishListsActions.changeWishListOrder({currentWishList: currentWishList as WishlistType, leaveWishList: leaveWishlist as WishlistType}))
+		 dispatch(wishListsActions.wishlistsSort())
 	}
+
+
     return (
+
 		<div className="App wishlist">
 			<div className="wishlist__adding-form">
 				<div className="wishlist__adding-form__title">Adding new Wishlist</div>
@@ -66,7 +84,7 @@ export function App() {
 
 			</div>
 			<div className="wishlist__cards">
-				{wishLists?.sort((a, b) => a.order - b.order).map((wl) => {
+				{wishLists?.map((wl) => {
 					const wishesWhatWeWantToSee = wl.filterByStatus === 'All' ? wishes[wl.id]
 						: wishes[wl.id].filter(el => el.status === wl.filterByStatus)
 					const wishesWhatWeWantToSeeGeneral = wl.filterByActivity === 'All' ? wishesWhatWeWantToSee :

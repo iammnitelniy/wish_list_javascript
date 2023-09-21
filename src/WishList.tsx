@@ -58,6 +58,7 @@ export const WishList: FC<WishListPropsType> = memo(({wishes, valueOfImportantFi
 		dispatch(wishesActions.changeWishTitle({wishlistID, wishId, newTitle}))
 	}
 	const removeWishListHandler = () => {
+		console.log(wishlistID)
 		dispatch(wishListsActions.removeWishlist({wishListId: wishlistID}))
 	}
 	return (
@@ -93,7 +94,7 @@ export const WishList: FC<WishListPropsType> = memo(({wishes, valueOfImportantFi
 						<div className="row-item status">Status</div>
 						<div className="row-item"></div>
 					</div>
-					{wishes.map((el: WishType) => {
+					{wishes?.map((el: WishType) => {
 						return (
 							<div className={el.checked ? "table-row selected" : "table-row"} key={el.id}>
 								<div className="row-item checkbox">
