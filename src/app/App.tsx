@@ -28,11 +28,7 @@ export function App() {
 		return store.wishLists
 	})
 
-
 	console.log(wishLists)
-
-
-
 
 	const wishes = useSelector<AppRootStateType, WishesDataType>((store) => {
 		return store.wishes
